@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div>
+    <input type="text" name="title" placeholder="Todo"/>
+    <button class="saveBtn">Save</button>
+    <button class="saveAll">SAVEALL</button>
+</div>
+
+<ul class="todoList">
+
+</ul>
+
+<script>
+
+    const renderTodos = (arr) => {
+        const listUL = document.querySelector(".todoList")
+
+        let str = ''
+
+        // for문을 이용하여 값이 들어간 배열을 ul 테그에 넣는다.
+        for (let i = 0; i < arr.length; i++){
+            const {tno, title, complete} = arr[i]
+            // title을 출력, title 옆에 DEL 버튼을 만든다.
+            str += `<li data-tno = ${tno}>${title}<button data-tno="${tno}">DEL</button></li>`
+        }
+        listUL.innerHTML = str
+    }
+
+   const serviceTodos = (function(){
+       let sequence = 1
+       let arr = []
+
+       // 새로운 목록을 추가하는 코드
+       const add = (newTodo) => {
+           // 추가되는 목록의 tno는 sequence가 1씩 증가
+           newTodo.tno = sequence++
+           arr.push(newTodo)
+           renderTodos(arr)
+       }
+
+       // 목록을 삭제하는 코드
+       const remove = (tno) => {
+           // 문자열 tno를 숫자로 변환해주고 filter를 이용해 비교해 todo.tno와 같지 않으면 result에 담아준다.
+           const result = arr.filter(todo => todo.tno !== parseInt(tno))
+           // result에 담긴 값을 arr배열에 담아준다.
+           arr = result
+           renderTodos(arr)
+       }
+
+       // 목록 전체를 저장하는 코드
+       const save = () => {
+           const str = JSON.stringify(arr)
+           localStorage.setItem("todos", str)
+       }
+
+       // dataStr을 localStorage에 저장하는 코드
+       const loadArr = () => {
+           const dataStr = localStorage.getItem("todos")
+
+           if(dataStr){
+               arr = JSON.parse(dataStr)
+               renderTodos(arr)
+           }else {
+               arr = []
+           }
+       }
+
+    return {add, remove, save, loadArr}
+
+   })();
+
+    //
+    document.querySelector(".saveBtn").addEventListener("click", () => {
+        const value = document.querySelector("input[name = title]").value
+        console.log(value)
+        serviceTodos.add({title:value, complete:false})
+        document.querySelector("input[name = title]").valueOf = ''
+
+    }, false)
+
+
+    document.querySelector(".todoList").addEventListener("click", (e) => {
+        const target = e.target
+        if(target.tagName !== "BUTTON"){
+            return
+        }
+
+        const tno = target.getAttribute("data-tno")
+
+        serviceTodos.remove(tno)
+
+    }, false)
+
+
+    document.querySelector(".saveAll").addEventListener("click", () => {
+        if (confirm("저장하시겠습니까?")){
+            serviceTodos.save()
+        }
+    }, false)
+
+    // serviceTodos.add({title: 'winter', complete: false})
+    // serviceTodos.add({title: 'winter', complete: false})
+    // serviceTodos.add({title: 'winter', complete: false})
+
+    serviceTodos.loadArr()
+</script>
+
+</body>
+</html>
