@@ -74,7 +74,7 @@
 
    })();
 
-    //
+    // 클래스 명이 saveBtn인 버튼에 클릭 이벤트를 부여
     document.querySelector(".saveBtn").addEventListener("click", () => {
         const value = document.querySelector("input[name = title]").value
         console.log(value)
@@ -82,6 +82,7 @@
         document.querySelector("input[name = title]").valueOf = ''
 
     }, false)
+
 
 
     document.querySelector(".todoList").addEventListener("click", (e) => {
@@ -97,6 +98,7 @@
     }, false)
 
 
+    // 클래스 명이 saveAll인 버튼에 클릭 이벤트를 부여
     document.querySelector(".saveAll").addEventListener("click", () => {
         if (confirm("저장하시겠습니까?")){
             serviceTodos.save()
